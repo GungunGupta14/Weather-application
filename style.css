@@ -184,7 +184,16 @@ h1 {
     font-size: 1rem;
     font-weight: 200;
 }
+@media (max-width: 768px) {
+    .parameter-container {
+        flex-direction: column;
+        align-items: center;
+    }
 
+    .parameter {
+        width: 100%;
+    }
+}
 .form-container{
     display: none;
     width:90%;
@@ -226,4 +235,19 @@ h1 {
     justify-content: center;
     border-radius: 100%;
     margin-bottom:1px;
+}
+.error-control{
+    display: none;
+}
+.error-control.active{
+    display: flex;
+}
+.error-control img{
+    width: 20%;
+    /* height: 50%; */
+}
+.error-control p{
+    font-size: 1.15rem;
+    font-weight:600;
+    text-transform: uppercase;
 }

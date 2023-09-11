@@ -6,11 +6,11 @@ const grantAccessContainer = document.querySelector(".grant-location-container")
 const searchForm = document.querySelector("[data-searchForm]");
 const loadingScreen = document.querySelector(".loading-container");
 const userInfoContainer = document.querySelector(".user-info-container");
-
+const errorControl = document.querySelector(".error-control");
 //initially vairables need????
 
 let oldTab = userTab;
-const API_KEY = "d1845658f92b31c64bd94f06f7188c9c";
+const API_KEY = "64ca6cecbc7db5ea841d98c76b6318a1";
 oldTab.classList.add("current-tab");
 getfromSessionStorage();
 
@@ -89,27 +89,38 @@ async function fetchUserWeatherInfo(coordinates) {
 
 function renderWeatherInfo(weatherInfo) {
     //fistly, we have to fethc the elements 
+    if( weatherInfo?.cod == 404){
+        loadingScreen.classList.remove("active");
+        userInfoContainer.classList.remove("active");
+        errorControl.classList.add("active");
 
-    const cityName = document.querySelector("[data-cityName]");
-    const countryIcon = document.querySelector("[data-countryIcon]");
-    const desc = document.querySelector("[data-weatherDesc]");
-    const weatherIcon = document.querySelector("[data-weatherIcon]");
-    const temp = document.querySelector("[data-temp]");
-    const windspeed = document.querySelector("[data-windspeed]");
-    const humidity = document.querySelector("[data-humidity]");
-    const cloudiness = document.querySelector("[data-cloudiness]");
+    }
+    else{
+        errorControl.classList.remove("active");
+        const cityName = document.querySelector("[data-cityName]");
+        const countryIcon = document.querySelector("[data-countryIcon]");
+        const desc = document.querySelector("[data-weatherDesc]");
+        const weatherIcon = document.querySelector("[data-weatherIcon]");
+        const temp = document.querySelector("[data-temp]");
+        const windspeed = document.querySelector("[data-windspeed]");
+        const humidity = document.querySelector("[data-humidity]");
+        const cloudiness = document.querySelector("[data-cloudiness]");
 
-    console.log(weatherInfo);
+        console.log(weatherInfo);
+        // console.log(weatherInfo?.cod == 404);
 
-    //fetch values from weatherINfo object and put it UI elements
-    cityName.innerText = weatherInfo?.name;
-    countryIcon.src = `https://flagcdn.com/144x108/${weatherInfo?.sys?.country.toLowerCase()}.png`;
-    desc.innerText = weatherInfo?.weather?.[0]?.description;
-    weatherIcon.src = `http://openweathermap.org/img/w/${weatherInfo?.weather?.[0]?.icon}.png`;
-    temp.innerText = `${weatherInfo?.main?.temp} °C`;
-    windspeed.innerText = `${weatherInfo?.wind?.speed} m/s`;
-    humidity.innerText = `${weatherInfo?.main?.humidity}%`;
-    cloudiness.innerText = `${weatherInfo?.clouds?.all}%`;
+
+        //fetch values from weatherINfo object and put it UI elements
+        cityName.innerText = weatherInfo?.name;
+        countryIcon.src = `https://flagcdn.com/144x108/${weatherInfo?.sys?.country.toLowerCase()}.png`;
+        desc.innerText = weatherInfo?.weather?.[0]?.description;
+        weatherIcon.src = `http://openweathermap.org/img/w/${weatherInfo?.weather?.[0]?.icon}.png`;
+        temp.innerText = `${weatherInfo?.main?.temp} °C`;
+        windspeed.innerText = `${weatherInfo?.wind?.speed} m/s`;
+        humidity.innerText = `${weatherInfo?.main?.humidity}%`;
+        cloudiness.innerText = `${weatherInfo?.clouds?.all}%`;
+    }
+    
 
 
 }
@@ -120,6 +131,7 @@ function getLocation() {
     }
     else {
         //HW - show an alert for no gelolocation support available
+        alert("Geolocation is not supported by this browser.");
     }
 }
 
@@ -158,7 +170,7 @@ async function fetchSearchWeatherInfo(city) {
     try {
         const response = await fetch(
             `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
-          );
+        );
         const data = await response.json();
         loadingScreen.classList.remove("active");
         userInfoContainer.classList.add("active");
@@ -166,5 +178,9 @@ async function fetchSearchWeatherInfo(city) {
     }
     catch(err) {
         //hW
+        loadingScreen.classList.remove("active");
+        userInfoContainer.classList.remove("active");
+        errorControl.classList.add("active");
+
     }
 }
